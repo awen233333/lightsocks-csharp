@@ -1,0 +1,16 @@
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.exe
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.deps.json
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.runtimeconfig.json
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.runtimeconfig.dev.json
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.dll
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\ref\LightSocksLocal.dll
+F:\code\lightsocks-csharp\src\LightSocksLocal\bin\Debug\net5.0\LightSocksLocal.pdb
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.csprojAssemblyReference.cache
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.GeneratedMSBuildEditorConfig.editorconfig
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.AssemblyInfoInputs.cache
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.AssemblyInfo.cs
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.csproj.CoreCompileInputs.cache
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.dll
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\ref\LightSocksLocal.dll
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.pdb
+F:\code\lightsocks-csharp\src\LightSocksLocal\obj\Debug\net5.0\LightSocksLocal.genruntimeconfig.cache
