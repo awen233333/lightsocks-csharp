@@ -7,6 +7,7 @@ namespace LightSocksServer
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            LsServer.StartListening();
         }
     }
 }

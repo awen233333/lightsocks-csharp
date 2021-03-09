@@ -1,0 +1,2 @@
+F:\code\lightsocks-csharp\src\LightSocksServer\bin\Debug\net5.0\win-x64\publish\LightSocksServer.pdb
+F:\code\lightsocks-csharp\src\LightSocksServer\bin\Debug\net5.0\win-x64\publish\LightSocksServer.exe

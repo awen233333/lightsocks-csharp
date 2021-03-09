@@ -2,10 +2,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Launch (Server)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/LightSocksServer/bin/Debug/net5.0/LightSocksServer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/LightSocksServer",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
-            "name": ".NET Core Launch (console)",
+            "name": ".NET Core Launch (Local)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
