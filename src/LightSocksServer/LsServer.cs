@@ -22,7 +22,7 @@ namespace LightSocksServer
         public StringBuilder sb = new StringBuilder();
 
         // Client socket.
-        public Socket workSocket = null;
+        public Socket clientSocket = null;
     }
 
     public class LsServer
@@ -30,18 +30,10 @@ namespace LightSocksServer
         // Thread signal.  
         public static ManualResetEvent allDone = new ManualResetEvent(false);
 
-        public LsServer()
-        {
-        }
-
         public static void StartListening()
         {
-            // Establish the local endpoint for the socket.  
-            // The DNS name of the computer  
-            // running the listener is "host.contoso.com".  
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 1088);
 
             // Create a TCP/IP socket.  
             Socket listener = new Socket(ipAddress.AddressFamily,
@@ -53,18 +45,17 @@ namespace LightSocksServer
                 listener.Bind(localEndPoint);
                 listener.Listen(100);
 
+                Console.WriteLine("Listening to " + ((IPEndPoint)listener.LocalEndPoint).Address.MapToIPv4());
+
                 while (true)
                 {
-                    // Set the event to nonsignaled state.  
                     allDone.Reset();
 
-                    // Start an asynchronous socket to listen for connections.  
                     Console.WriteLine("Waiting for a connection...");
                     listener.BeginAccept(
                         new AsyncCallback(AcceptCallback),
                         listener);
 
-                    // Wait until a connection is made before continuing.  
                     allDone.WaitOne();
                 }
 
@@ -81,67 +72,100 @@ namespace LightSocksServer
 
         public static void AcceptCallback(IAsyncResult ar)
         {
-            // Signal the main thread to continue.  
-            allDone.Set();
-
-            // Get the socket that handles the client request.  
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
-
-            // Create the state object.  
-            StateObject state = new StateObject();
-            state.workSocket = handler;
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ReadCallback), state);
-        }
-
-        public static void ReadCallback(IAsyncResult ar)
-        {
-            String content = String.Empty;
-
-            // Retrieve the state object and the handler socket  
-            // from the asynchronous state object.  
-            StateObject state = (StateObject)ar.AsyncState;
-            Socket handler = state.workSocket;
-
-            // Read data from the client socket.
-            int bytesRead = handler.EndReceive(ar);
-
-            if (bytesRead > 0)
+            try
             {
-                // There  might be more data, so store the data received so far.  
-                state.sb.Append(Encoding.ASCII.GetString(
-                    state.buffer, 0, bytesRead));
+                allDone.Set();
 
-                // Check for end-of-file tag. If it is not there, read
-                // more data.  
-                content = state.sb.ToString();
-                if (content.IndexOf("<EOF>") > -1)
-                {
-                    // All the data has been read from the
-                    // client. Display it on the console.  
-                    Console.WriteLine("Read {0} bytes from socket. \n Data : {1}",
-                        content.Length, content);
-                    // Echo the data back to the client.  
-                    Send(handler, content);
-                }
-                else
-                {
-                    // Not all data received. Get more.  
-                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                    new AsyncCallback(ReadCallback), state);
-                }
+                Socket listener = (Socket)ar.AsyncState;
+                Socket handler = listener.EndAccept(ar);
+
+                Console.WriteLine("accept to " + ((IPEndPoint)handler.LocalEndPoint).Address.MapToIPv4() + ((IPEndPoint)handler.LocalEndPoint).Port);
+
+                // Create the state object.  
+                StateObject state = new StateObject();
+                state.clientSocket = handler;
+                
+                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(HandleConn), state);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
             }
         }
 
-        private static void Send(Socket handler, String data)
+        public static void HandleConn(IAsyncResult ar)
         {
-            // Convert the string data to byte data using ASCII encoding.  
-            byte[] byteData = Encoding.ASCII.GetBytes(data);
+            try
+            {
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket handler = state.clientSocket;
 
-            // Begin sending the data to the remote device.  
-            handler.BeginSend(byteData, 0, byteData.Length, 0,
-                new AsyncCallback(SendCallback), handler);
+                // Read data from the client socket.
+                int bytesRead = handler.EndReceive(ar);
+
+                if (bytesRead > 0)
+                {
+                    handler.Send(new byte[] { 0x05, 0x00 });
+                    Console.WriteLine(12);
+                    
+                    handler.Receive(state.buffer);
+                    Console.WriteLine(34);
+                    
+                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ClientReceive), state);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+        public static void ClientReceive(IAsyncResult ar)
+        {
+            try
+            {
+
+                Console.WriteLine("bsb");
+
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket handler = state.clientSocket;
+
+                // Read data from the client socket.
+                int bytesRead = handler.EndReceive(ar);
+
+                if (bytesRead > 0)
+                {
+                    Console.WriteLine(BitConverter.ToString(state.buffer));
+                    Console.WriteLine("jiji");
+                    handler.BeginSend(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(DecodeCopy), state);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+        }
+        private static void DecodeCopy(IAsyncResult ar)
+        {
+            try
+            {
+
+                StateObject state = (StateObject)ar.AsyncState;
+                Socket handler = state.clientSocket;
+                int Ret = handler.EndSend(ar);
+
+                if (Ret > 0)
+                {
+                    handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                        new AsyncCallback(ClientReceive), state);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         private static void SendCallback(IAsyncResult ar)
@@ -166,36 +190,4 @@ namespace LightSocksServer
         }
 
     }
-    // class LsServer
-    // {
-    // 	private IPAddress ListenAddr;
-    // 	private Socket _socket;
-
-    // 	public LsServer(string password, string listenAddr)
-    // 	{
-    // 		ListenAddr = IPAddress.Parse(listenAddr);
-    // 	}
-
-    // 	public void Listen() 
-    // 	{
-    // 		try
-    // 		{
-    // 			_socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-    // 			IPEndPoint endPoint = new IPEndPoint(ListenAddr, 8998);
-    // 			_socket.Bind(endPoint);
-    // 			_socket.Listen();
-    // 			while (true)
-    // 			{
-
-    // 			}
-    // 		}
-    // 		catch(Exception ex)
-    //         {
-    // 			_socket.Shutdown(SocketShutdown.Both);
-    // 			_socket.Close();
-    // 			Console.WriteLine(ex.Message);
-    // 		}
-    // 	}
-
-    // }
 }

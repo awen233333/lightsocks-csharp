@@ -7,6 +7,7 @@ namespace LightSocksLocal
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+            LsLocal.StartListening();
         }
     }
 }
