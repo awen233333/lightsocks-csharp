@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightSocksLocal", "LightSocksLocal\LightSocksLocal.csproj", "{34501706-95BA-41C6-B44B-2A5CA2192D65}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightSocksServer", "LightSocksServer\LightSocksServer.csproj", "{D93815E6-8431-4481-87A5-C4F0562F855D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LightSocksServer", "LightSocksServer\LightSocksServer.csproj", "{D93815E6-8431-4481-87A5-C4F0562F855D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightSocksTest", "LightSocksTest\LightSocksTest.csproj", "{7454F40B-1F49-4078-8512-DF81E9481525}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{D93815E6-8431-4481-87A5-C4F0562F855D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D93815E6-8431-4481-87A5-C4F0562F855D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D93815E6-8431-4481-87A5-C4F0562F855D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7454F40B-1F49-4078-8512-DF81E9481525}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7454F40B-1F49-4078-8512-DF81E9481525}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7454F40B-1F49-4078-8512-DF81E9481525}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7454F40B-1F49-4078-8512-DF81E9481525}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -84,7 +84,7 @@ namespace LightSocksServer
                 // Create the state object.  
                 StateObject state = new StateObject();
                 state.clientSocket = handler;
-                
+
                 handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                     new AsyncCallback(HandleConn), state);
             }
@@ -108,10 +108,10 @@ namespace LightSocksServer
                 {
                     handler.Send(new byte[] { 0x05, 0x00 });
                     Console.WriteLine(12);
-                    
+
                     handler.Receive(state.buffer);
                     Console.WriteLine(34);
-                    
+
                     handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                         new AsyncCallback(ClientReceive), state);
                 }

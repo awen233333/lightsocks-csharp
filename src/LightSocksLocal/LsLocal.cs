@@ -12,7 +12,7 @@ namespace LightSocksLocal
     public class StateObject
     {
         // Size of receive buffer.  
-        public const int BufferSize = 1024;
+        public const int BufferSize = 128;
 
         // Receive buffer.  
         public byte[] buffer = new byte[BufferSize];
@@ -73,29 +73,37 @@ namespace LightSocksLocal
 
         public static void AcceptCallback(IAsyncResult ar)
         {
-            // Signal the main thread to continue.  
-            allDone.Set();
+            try
+            {
+                // Signal the main thread to continue.  
+                allDone.Set();
 
-            // Get the socket that handles the client request.  
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
+                // Get the socket that handles the client request.  
+                Socket listener = (Socket)ar.AsyncState;
+                Socket handler = listener.EndAccept(ar);
 
-            Console.WriteLine("accept to " + ((IPEndPoint)listener.LocalEndPoint).Address.MapToIPv4());
+                Console.WriteLine("accept to " + ((IPEndPoint)listener.LocalEndPoint).Address.MapToIPv4());
 
-            Socket server = DialRemote();
+                Socket server = DialRemote();
 
-            Console.WriteLine("connect to " + ((IPEndPoint)server.LocalEndPoint).Address.MapToIPv4());
+                Console.WriteLine("connect to " + ((IPEndPoint)server.LocalEndPoint).Address.MapToIPv4());
 
 
-            // Create the state object.  
-            StateObject state = new StateObject();
-            state.clientSocket = handler;
-            state.serverSocket = server;
+                // Create the state object.  
+                StateObject state = new StateObject();
+                state.clientSocket = handler;
+                state.serverSocket = server;
 
-            server.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ServerReceive), state);
-            handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
-                new AsyncCallback(ClientReceive), state);
+                server.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(ServerReceive), state);
+                handler.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
+                    new AsyncCallback(ClientReceive), state);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
         }
 
         public static void ServerReceive(IAsyncResult ar)
@@ -107,7 +115,7 @@ namespace LightSocksLocal
                 int Ret = handler.EndReceive(ar);
                 if (Ret > 0)
                 {
-                    Console.WriteLine(BitConverter.ToString(state.buffer));
+                    Console.WriteLine("ServerReceive " + BitConverter.ToString(state.buffer));
                     state.clientSocket.BeginSend(state.buffer, 0, StateObject.BufferSize, 0,
                         new AsyncCallback(ClientSent), state);
                 }
@@ -128,6 +136,7 @@ namespace LightSocksLocal
                 int Ret = handler.EndSend(ar);
                 if (Ret > 0)
                 {
+                    Console.WriteLine("ClientSent " + BitConverter.ToString(state.buffer));
                     state.serverSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                         new AsyncCallback(ServerReceive), state);
                 }
@@ -151,7 +160,7 @@ namespace LightSocksLocal
 
                 if (bytesRead > 0)
                 {
-                    Console.WriteLine(BitConverter.ToString(state.buffer));
+                    Console.WriteLine("ClientReceive " + BitConverter.ToString(state.buffer));
                     state.serverSocket.BeginSend(state.buffer, 0, StateObject.BufferSize, 0, new AsyncCallback(ServerSent), state);
                 }
             }
@@ -173,7 +182,7 @@ namespace LightSocksLocal
                     IPAddress clientAddress = ((IPEndPoint)state.clientSocket.LocalEndPoint).Address.MapToIPv4();
                     IPAddress serverAddress = ((IPEndPoint)handler.LocalEndPoint).Address.MapToIPv4();
 
-                    Console.WriteLine(BitConverter.ToString(state.buffer));
+                    Console.WriteLine("ServerSent " + BitConverter.ToString(state.buffer));
 
                     state.clientSocket.BeginReceive(state.buffer, 0, StateObject.BufferSize, 0,
                         new AsyncCallback(ClientReceive), state);
